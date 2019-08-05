@@ -1,0 +1,23 @@
+FROM golang:latest
+
+WORKDIR /go/src/voice-backend
+
+# Set default port
+ENV PORT=8000
+EXPOSE 8000
+
+# Copy all content into image
+ADD . /go/src/voice-backend
+
+#ENV GOPATH=/go
+
+# Compile program
+#RUN go get ./main
+RUN go get github.com/gorilla/mux && \
+    go get golang.org/x/text/transform && \
+    go get golang.org/x/text/unicode/norm
+
+RUN go build
+
+# Execute backend
+ENTRYPOINT ["./voice-backend"]
