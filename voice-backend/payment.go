@@ -65,6 +65,9 @@ func sendTransactionToInfura(payment Payment) string {
 	// 		Send to infura
 	// 		return tx hash
 
+	
+	checkInfuraStatus()
+
 	mockTxHash := "0xa223f1cef82127af1ad545793f22fc0f3200be78de84dd82428898ea3adab602"
 	return mockTxHash
 }
