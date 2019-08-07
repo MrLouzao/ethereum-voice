@@ -1,0 +1,20 @@
+{
+  "name": "signerbackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "PORT=8080 PRIVATEKEY=3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266 node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ethereumjs-tx": "^2.1.0",
+    "express": "^4.17.1",
+    "keythereum": "^1.0.4",
+    "mongodb": "^3.3.0-beta2",
+    "monk": "^7.0.0"
+  }
+}
