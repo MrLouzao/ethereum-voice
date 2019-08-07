@@ -34,6 +34,10 @@ You must receive a response like this:
 
 ## Wallets for testing
 
+- Testing 1 wallet:
+ - Public: 0x007BfF585Be4B690db8FBC9FDe4F936294Fa37De
+ - Private: 109ACFDD4C5B16564EC4C3AC8EC5AC7EFC858B163841A95D15C85E1B877DB0BD
+
 - Louzao wallet:
   - Password: ABCD1234efg5ZYX
   - Public: 0xde95aff743b29b72885a27d03795632f6e741fdf

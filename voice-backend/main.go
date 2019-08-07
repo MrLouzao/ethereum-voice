@@ -26,7 +26,7 @@ func MakeEthereumPayment(w http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(w).Encode(myHumanResponse)
 	} else {
 		// Perform the payment and send response to user
-		stateMessage := PerformPayment(payment)
+		stateMessage := PerformPayment(payment, "0x007BfF585Be4B690db8FBC9FDe4F936294Fa37De")
 		myHumanResponse := HumanResponse{FulfillmentText: stateMessage}
 		json.NewEncoder(w).Encode(myHumanResponse)
 	}
@@ -82,9 +82,13 @@ func main() {
 	isInfuraUp := checkInfuraStatus()
 	fmt.Println("** Is infura up?", isInfuraUp)
 
+	/* // Print gas price in hex
+	gasPrice := EtherFloatToWeiHex(0.000000003)
+	fmt.Println("Current gas price: ", gasPrice)
+	*/
+
 	// Initialize
 	router := mux.NewRouter()
 	router.HandleFunc("/voice-payment", MakeEthereumPayment).Methods("POST")
-
 	http.ListenAndServe(PORT, router)
 }

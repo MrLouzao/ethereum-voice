@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"errors"
+	"fmt"
 )
 
 
@@ -63,9 +64,99 @@ func checkInfuraStatus() bool {
 		var responseObject InfuraResponse
 		json.Unmarshal(responseData, &responseObject)
 		// check if error is empty
-		result := responseObject.Error == InfuraErrorResponse{}
-		return result
+		hasNoError := responseObject.Error == InfuraErrorResponse{}
+		return hasNoError
 	}
+}
+
+
+
+func getAddressNonce(address string) (string, error) {
+	// Create Tx Request with rawTx as parameter
+	requestForInfura := InfuraRequest {
+		JsonRpc: "2.0",
+		Method: "eth_getTransactionCount",
+		Params: []string{address, "pending"},
+		Id: 1,
+	}
+	requestBody, err := json.Marshal(requestForInfura)
+	if err != nil {
+		return "", errors.New("Failing at creating request")
+	}
+
+	// Make request
+	resp, err := http.Post(INFURA_URL, "application/json", bytes.NewBuffer(requestBody) )
+	if err != nil {
+		return "", errors.New("Failing at sending request to Infura")
+	}
+
+	// Read body response
+	if resp.StatusCode != 200 {
+		return "", errors.New("Failing at sending request to Infura")
+	} else {
+	
+		responseData ,err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return "", errors.New("Failing at parsing response from Infura")
+		}
+		
+		// Unmarshall  - If contains error message, return false (Node not ready)
+		var responseObject InfuraResponse
+		json.Unmarshal(responseData, &responseObject)
+
+		// check if error is empty
+		hasError := responseObject.Error != InfuraErrorResponse{}
+		if !hasError {
+			return responseObject.Result, nil
+		} else {
+			return "", errors.New(responseObject.Error.Message)
+		}
+		
+	}
+}
+
+
+func GetAddressBalance(address string) (string) {
+	// Create Tx Request with rawTx as parameter
+	requestForInfura := InfuraRequest {
+		JsonRpc: "2.0",
+		Method: "eth_getBalance",
+		Params: []string{address, "pending"},
+		Id: 1,
+	}
+	requestBody, err := json.Marshal(requestForInfura)
+	if err != nil {
+		return "0.0"
+	}
+
+	// Make request
+	resp, err := http.Post(INFURA_URL, "application/json", bytes.NewBuffer(requestBody) )
+	if err != nil {
+		return "0.0"
+	}
+
+	// Read body response
+	if resp.StatusCode != 200 {
+		return "0.0"
+	} else {
+		responseData ,err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return "0.0"
+		}
+		
+		// Unmarshall  - If contains error message, return false (Node not ready)
+		var responseObject InfuraResponse
+		json.Unmarshal(responseData, &responseObject)
+
+		// check if error is empty
+		hasError := responseObject.Error != InfuraErrorResponse{}
+		if !hasError {
+			return responseObject.Result
+		} else {
+			return "0.0"
+		}	
+	}
+
 }
 
 
@@ -73,7 +164,7 @@ func checkInfuraStatus() bool {
 /**
 	Send a raw transaction to Infura. Retrieve the txHash as result or error.
 */
-func sendRawTransaction(rawTx string) (string, error) {
+func SendRawTransaction(rawTx string) (string, error) {
 	// Create Tx Request with rawTx as parameter
 	requestForInfura := InfuraRequest {
 		JsonRpc: "2.0",
@@ -106,14 +197,14 @@ func sendRawTransaction(rawTx string) (string, error) {
 		var responseObject InfuraResponse
 		json.Unmarshal(responseData, &responseObject)
 		// check if error is empty
-		hasError := responseObject.Error == InfuraErrorResponse{}
+		hasError := responseObject.Error != InfuraErrorResponse{}
 		if !hasError {
 			return responseObject.Result, nil
 		} else {
+			fmt.Println("** Error while sending tx to Ropsten network. Cause:", responseObject.Error.Message)
 			return "", errors.New(responseObject.Error.Message)
 		}
 		
 	}
 
-	return "Everything is ok", nil
 }

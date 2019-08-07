@@ -17,7 +17,7 @@ exports.signTransaction = async function (transaction) {
             data: transaction.data,
           }
         //, { chain: 'mainnet', hardfork: 'petersburg' } could be useful
-        const tx = new EthereumTx(txParams);
+        const tx = new EthereumTx(txParams, { chain: 'ropsten', hardfork: 'petersburg' });
         var privateKey = Buffer.from(process.env.PRIVATEKEY.toString(), 'hex');
         tx.sign(privateKey);
         const signedTx = `0x${tx.serialize().toString('hex')}`;

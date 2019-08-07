@@ -23,7 +23,7 @@ var AppContacts = []UserContact {
 	},
 	UserContact {
 		Name: "Alicia",
-		WalletAddress: "0xde95aff743b29b72885a27d03795632f6e741fdf",
+		WalletAddress: "0xCF46eC111492a5b00246eBBe260746A7E2E76558",
 	},
 	UserContact {
 		Name: "maquina de caramelos",
