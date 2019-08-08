@@ -1,6 +1,7 @@
 # VOICE-BACKEND
 
-This is the voice backend to expose the REST API.
+Voice Backend written in Golang that exposes the REST API to perform payments over Ethereum network.
+This backend requires a signer backend running previously and an Infura endpoint.
 
 
 ## Environment variables
@@ -9,10 +10,11 @@ This backend should run with the following environment variables set:
 
 * INFURA_URL: refers to the INFURA URL project, required to connect to a node.
 * SIGNER_URL: refers to the container that signs your transactions.
+* PORT: port exposed for this application (8000 by default).
 
 ## Deploy on Docker
 
-This backend is intended to be deployed on docker. First we create the image with docker build and then we run the instance with the correspondant environment variables.
+This backend is intended to be deployed on cloud as a service. On development, we create the correspondant image with docker build and then we run the instance with the correspondant environment variables.
 
 ```bash
 $ docker build -t mrlouzao/voice-backend . 
@@ -31,8 +33,14 @@ You must receive a response like this:
 }
 ```
 
+Once the application is running properly on your localhost, you must push the image to your registry (in our case Google Cloud Registry) and create a VM running this docker image. The container created requires the environment variables INFURA_URL and SIGNER_URL.
+
 
 ## Wallets for testing
+
+**Important**: for this initial version (PoC) the wallet used is the Testing 1. In next versions, an env var will be created to pass the public address of the wallet as a parameter when creating the docker container instance.
+
+We have the following wallets:
 
 - Testing 1 wallet:
  - Public: 0x007BfF585Be4B690db8FBC9FDe4F936294Fa37De
