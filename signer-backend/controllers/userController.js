@@ -8,11 +8,20 @@ exports.getUsers = function (req, res, next) {
     .catch((e)=>{res.status(400).json({ status: 400, message: e.message })});
 };
 
+exports.getUser = function (req, res, next) {
+    // Validate request parameters, queries using express-validator
+    var db = req.db;
+    var name = req.params.name
+    service.getUser(db,name)
+    .then((userData) => { res.status(200).json({ status: 200, data: userData, message: "Succesfully get user "+name }) })
+    .catch((e)=>{res.status(400).json({ status: 400, message: e.message })});
+};
+
 exports.addUsers = function (req, res, next) {
     // Validate request parameters, queries using express-validator
     var db = req.db;
     let user = req.body;
-    console.log(user);
+    console.log('Adding the user:', user);
     service.addUser(db,user)
     .then((_id) => { res.status(200).json({ status: 200, data: _id, message: "Succesfully set user" }) })
     .catch((e)=>{res.status(400).json({ status: 400, message: e.message })});
