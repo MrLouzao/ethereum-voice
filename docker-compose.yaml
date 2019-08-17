@@ -1,0 +1,22 @@
+version: "2.0"
+
+services:
+
+  signer-backend:
+    container_name: "signer-backend"
+    image: gcr.io/silent-base-248410/mrlouzao/signer-backend:1
+    ports:
+      - "8080:8080"
+    environment:
+      - PRIVATEKEY=109ACFDD4C5B16564EC4C3AC8EC5AC7EFC858B163841A95D15C85E1B877DB0BD
+
+  voice-backend:
+    container_name: "voice-backend"
+    image: gcr.io/silent-base-248410/voice-backend-image:2
+    ports:
+      - "80:8000"
+    environment:
+      - INFURA_URL=https://ropsten.infura.io/v3/77b7ade3f1ac4723aec603d63d1947dd
+      - SIGNER_URL=http://signer-backend:8080
+    
+

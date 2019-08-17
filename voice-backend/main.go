@@ -82,11 +82,6 @@ func main() {
 	isInfuraUp := checkInfuraStatus()
 	fmt.Println("** Is infura up?", isInfuraUp)
 
-	/* // Print gas price in hex
-	gasPrice := EtherFloatToWeiHex(0.000000003)
-	fmt.Println("Current gas price: ", gasPrice)
-	*/
-
 	// Initialize
 	router := mux.NewRouter()
 	router.HandleFunc("/voice-payment", MakeEthereumPayment).Methods("POST")

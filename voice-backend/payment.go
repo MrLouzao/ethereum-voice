@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"errors"
 	"fmt"
+	"strings"
+	"strconv"
 )
 
 
@@ -12,16 +14,19 @@ import (
 // - we define the fields with its type and how to parse
 type Payment struct {
 	Name             string  
-	Amount           float64  
+	Amount           float64
+	Lang             string
 }
 
 
 func CheckPaymentIsValid(payment Payment) error {
 	if payment.Name == "" {
-		return errors.New("Payment field 'name' is not defined")
+		errMsg := getCodeMessage("ERR_PAYMENT_NAME", payment.Lang)
+		return errors.New(errMsg)
 	}
 	if payment.Amount <= 0 {
-		return errors.New("Payment field 'amount' is empty")
+		errMsg := getCodeMessage("ERR_PAYMENT_AMOUNT", payment.Lang)
+		return errors.New(errMsg)
 	}
 	return nil
 }
@@ -44,14 +49,6 @@ func ObtainPaymentParameters(request *http.Request) Payment {
 
 
 // Perform the payment againts INFURA
-// TODO
-// 1. Get the recipient
-// 2. Check the balance for from account
-// 3. Get the nonce for address
-// 4. Create tx
-// 5. Sign tx calling the signer
-// 6. Send tx to Infura
-// 7. Return tx hash from network
 func PerformPayment(payment Payment, walletAddress string) string{
 	var msg string
 
@@ -59,7 +56,8 @@ func PerformPayment(payment Payment, walletAddress string) string{
 	contactAddress := GetContactAddress(payment.Name)
 	if contactAddress == "" {
 		// Generate a Human Response
-		msg := "Contacto " + payment.Name + " no tiene una dirección registrada"
+		msg := getCodeMessage("ERR_NO_CONTACT_REGISTERED", payment.Lang)
+		msg = strings.Replace(msg, "${0}", payment.Name, -1)
 		return msg
 	}
 	
@@ -68,14 +66,16 @@ func PerformPayment(payment Payment, walletAddress string) string{
 	walletBalance := HexAmountWeiToEther(walletBalanceHex)
 	hasEnoughFundsInWallet := walletBalance > payment.Amount
 	if !hasEnoughFundsInWallet {
-		msg := fmt.Sprintf("No hay fondos suficientes en la wallet. Requeridos: %f pero actualmente en cuenta %f", payment.Amount, walletBalance)
+		msg := getCodeMessage("ERR_NO_ENOUGH_FUNDS", payment.Lang)
+		msg = strings.Replace(msg, "${0}", strconv.FormatFloat(payment.Amount, 'f', 6, 64), -1)
+		msg = strings.Replace(msg, "${1}", strconv.FormatFloat(walletBalance, 'f', 6, 64), -1)
 		return msg
 	}
 
 	// Get nonce from account
 	walletNonce, err := getAddressNonce(walletAddress)
 	if err != nil {
-		msg := "Se ha producido un error al obtener los parámetros de tu cuenta"
+		msg := getCodeMessage("ERR_OBTAIN_NONCE", payment.Lang)
 		return msg
 	}
 
@@ -89,7 +89,7 @@ func PerformPayment(payment Payment, walletAddress string) string{
 	}
 	signedTx, err := SignRawTransaction(rawTransaction)
 	if err != nil {
-		msg := "Se ha producido un error al firmar la transacción"
+		msg := getCodeMessage("ERR_SIGNING_TX", payment.Lang)
 		return msg
 	}
 	fmt.Println("SIGNED TX: ", signedTx)
@@ -98,12 +98,15 @@ func PerformPayment(payment Payment, walletAddress string) string{
 	// Send transaction to infura
 	txHash, err := SendRawTransaction(signedTx)
 	if err != nil {
-		msg := "Se ha producido un error al enviar la transacción a la red"
+		msg := getCodeMessage("ERR_SENDING_TX", payment.Lang)
 		return msg
 	}
 
 	// All works fine! Tx done!
-	fmt.Println("EL HASH RECIBIDO ES: ", txHash)
-	msg = payment.Name + " va a recibir " + fmt.Sprintf("%f", payment.Amount) + " ether en su wallet. Mira aquí la transacción: https://ropsten.etherscan.io/tx/" + txHash
+	fmt.Println("Hash from TX on Ropsten: ", txHash)
+	msg = getCodeMessage("TX_SENT", payment.Lang)
+	msg = strings.Replace(msg, "${0}", payment.Name, -1)
+	msg = strings.Replace(msg, "${1}", fmt.Sprintf("%f", payment.Amount), -1)
+	msg = strings.Replace(msg, "${2}", txHash, -1)
 	return msg
 }

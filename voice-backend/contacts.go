@@ -15,11 +15,11 @@ var AppContacts = []UserContact {
 	},
 	UserContact {
 		Name: "Pablo",
-		WalletAddress: "0x4f41045c96c2e2eca0735e6a39002f4edce12fbe",
+		WalletAddress: "0xd0CfE66448093dDA6cdC6525DB0C66BF1DD9c138",
 	},
 	UserContact {
 		Name: "Rablo",
-		WalletAddress: "0x4f41045c96c2e2eca0735e6a39002f4edce12fbe",
+		WalletAddress: "0xd0CfE66448093dDA6cdC6525DB0C66BF1DD9c138",
 	},
 	UserContact {
 		Name: "Alicia",
@@ -27,7 +27,7 @@ var AppContacts = []UserContact {
 	},
 	UserContact {
 		Name: "maquina de caramelos",
-		WalletAddress: "0xde95aff743b29b72885a27d03795632f6e741fdf1",
+		WalletAddress: "0xd0CfE66448093dDA6cdC6525DB0C66BF1DD9c138",
 	},
 }
 

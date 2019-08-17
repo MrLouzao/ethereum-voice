@@ -1,0 +1,13 @@
+## Create a newtwork to connect both containers
+
+Problems when creating the network inside gcloud VM and docker. To solve this problems, we must create a network and connect both containers
+
+
+docker network create lsd
+
+docker run -itd -h signer -p 8080:8080 --network=lsd --name signer -e PRIVATEKEY=109ACFDD4C5B16564EC4C3AC8EC5AC7EFC858B163841A95D15C85E1B877DB0BD gcr.io/silent-base-248410/mrlouzao/signer-backend:1
+
+docker run -itd -h voice --name voice --network=lsd -p 80:8000 -e INFURA_URL=https://ropsten.infura.io/v3/77b7ade3f1ac4723aec603d63d1947dd -e SIGNER_URL=http://signer:8080  g
+cr.io/silent-base-248410/voice-backend-image:2
+
+
